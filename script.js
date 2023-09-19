@@ -14,13 +14,13 @@ function searchFarmersMarket() {
             return response.json();
         })
         .then(responseData => {
-            const data = responseData.data; // Access the "data" property
+            const data = responseData.data;
 
             const resultsContainer = document.getElementById('results');
-            resultsContainer.innerHTML = ''; // Clear previous results
+            resultsContainer.innerHTML = '';
 
             const resultsTable = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
-            resultsTable.innerHTML = ''; // Clear previous table rows
+            resultsTable.innerHTML = '';
 
             if (Array.isArray(data)) {
                 data.forEach(farm => {
