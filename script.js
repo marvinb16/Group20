@@ -9,7 +9,7 @@ function searchFarmersMarket() {
     fetch(apiUrl)
         .then(response => {
             if (!response.ok) {
-                throw new Error('That aint good');
+                throw new Error('Network response was not ok');
             }
             return response.json();
         })
@@ -17,10 +17,10 @@ function searchFarmersMarket() {
             const data = responseData.data;
 
             const resultsContainer = document.getElementById('results');
-            resultsContainer.innerHTML = '';
+            resultsContainer.innerHTML = ''; // Clear previous results
 
             const resultsTable = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
-            resultsTable.innerHTML = '';
+            resultsTable.innerHTML = ''; // Clear previous table rows
 
             if (Array.isArray(data)) {
                 data.forEach(farm => {
@@ -30,7 +30,8 @@ function searchFarmersMarket() {
                     const cell3 = row.insertCell(2);
 
                     cell1.textContent = farm.listing_name;
-                    cell2.textContent = `${farm.location_city}, ${farm.location_state}, ${farm.location_zipcode}`;
+                    const addressLink = `https://www.google.com/maps?q=${encodeURIComponent(farm.location_address)}`;
+                    cell2.innerHTML = `<a href="${addressLink}" target="_blank">${farm.location_city}, ${farm.location_state}, ${farm.location_zipcode}</a>`;
                     cell3.innerHTML = `<a href="${farm.media_website}" target="_blank">${farm.media_website}</a>`;
                 });
             } else {
