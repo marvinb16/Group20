@@ -32,7 +32,12 @@ function searchFarmersMarket() {
                     cell1.textContent = farm.listing_name;
                     const addressLink = `https://www.google.com/maps?q=${encodeURIComponent(farm.location_address)}`;
                     cell2.innerHTML = `<a href="${addressLink}" target="_blank">${farm.location_city}, ${farm.location_state}, ${farm.location_zipcode}</a>`;
-                    cell3.innerHTML = `<a href="${farm.media_website}" target="_blank">${farm.media_website}</a>`;
+                    //cell3.innerHTML = `<a href="${farm.media_website}" target="_blank">${farm.media_website}</a>`;
+                    if (farm.media_website) {
+                        cell3.innerHTML = `<a href="${farm.media_website}" target="_blank">${farm.media_website}</a>`;
+                    } else {
+                        cell3.textContent = 'No website';
+                    }
                 });
             } else {
                 resultsContainer.textContent = 'No data found.';
