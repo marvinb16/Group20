@@ -4,33 +4,19 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farmers Market Locator</title>
+    <title>Market Mapper</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Market Mapper</h1>
-    <label for="zipcode">Enter Zip Code:</label>
-    <input type="text" id="zipcode">
-    <label for="radius">Select Radius:</label>
-    <select id="radius">
-        <option value="10">10 miles</option>
-        <option value="20">20 miles</option>
-        <option value="30">30 miles</option>
-        <option value="50">50 miles</option>
-        <option value="100">100 miles</option>
-    </select>
-    <button onclick="searchFarmersMarket()">Search</button>
+    <header>
+        <a href="index.html"><h1 id="title">Market Mapper</h1></a>
+    </header>
+    <nav>
+        <ul class="navbar">
+            <li class="navitem" id="current"><a href="index.html">Home</a></li>
+            <li class="navitem"><a href="search.html">Search</a></li>
+        </ul>
+    </nav>
 
-    <table id="resultsTable">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Location</th>
-                <th>Website</th>
-            </tr>
-        </thead>
-        <tbody id="results"></tbody>
-    </table>
-
-    <script src="script.js"></script>
 </body>
 </html>
