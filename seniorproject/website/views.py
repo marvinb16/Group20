@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from .models import Post
 from . import db
 import json
+from .api import get_latest_api_call, fetch_farmers_market_data
 
 views = Blueprint('views', __name__)
 @views.route('/')
@@ -25,9 +26,18 @@ def post():
             flash("Post successful.", category="success")
     return render_template("post.html", activeUser = current_user)
 
-@views.route('/search')
+@views.route('/search', methods=['GET', 'POST'])
 def search():
-    return render_template("search.html", activeUser = current_user)
+    api_response = None
+    zipcode = request.form.get('zipcode')
+    radius = request.form.get('radius')
+
+    # Call the API function from api.py
+    if zipcode != None:
+        fetch_farmers_market_data(int(zipcode), int(radius))
+        api_response = get_latest_api_call()
+
+    return render_template("search.html", api_response=api_response, activeUser=current_user)
 
 @views.route('/feedback')
 @login_required
