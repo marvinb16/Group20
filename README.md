@@ -1,6 +1,6 @@
 # Group20
 
-Required pips
+Required pips:
 <br>pip install flask
 <br>pip install flask_login
 <br>pip install flask_sqlalchemy
