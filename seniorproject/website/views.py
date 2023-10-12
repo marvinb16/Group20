@@ -29,12 +29,18 @@ def post():
 @views.route('/search', methods=['GET', 'POST'])
 def search():
     api_response = None
-    zipcode = request.form.get('zipcode')
-    radius = request.form.get('radius')
 
-    # Call the API function from api.py
-    if zipcode != None:
-        fetch_farmers_market_data(int(zipcode), int(radius))
+    if request.method == 'POST':
+        zipcode = request.form.get('zipcode')
+        radius = request.form.get('radius')
+
+        # Check if zipcode is empty
+        if not zipcode or not zipcode.isdigit() or len(zipcode) != 5:
+            error_message = "Please enter a valid 5-digit zip code."
+            return render_template("search.html", error_message=error_message, activeUser=current_user)
+
+        # Call the API function from api.py
+        fetch_farmers_market_data(zipcode, radius)
         api_response = get_latest_api_call()
 
     return render_template("search.html", api_response=api_response, activeUser=current_user)
