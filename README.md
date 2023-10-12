@@ -1,7 +1,7 @@
 # Group20
 
-#Required pips
-#pip install flask
-#pip install flask_login
-#pip install flask_sqlalchemy
-#pip install Werkzeug==2.3.7
+Required pips
+<br>pip install flask
+<br>pip install flask_login
+<br>pip install flask_sqlalchemy
+<br>pip install Werkzeug==2.3.7
