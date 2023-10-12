@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Home{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/default.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" crossorigin="anonymous"/>
+</head>
+<body>
+    <header>
+        <a href="/"><h1 id="title">Market Mapper</h1></a>
+    </header>
+    <nav>
+        <ul class="mynavbar">
+            <li class="mynavitem" id="current"><a href="/">Home</a></li>
+            <li class="mynavitem"><a href="/search">Search</a></li>
+            {% if activeUser.is_authenticated %}
+                <li class="mynavitem"><a href="/post">Post</a></li>
+                <li class="mynavitem"><a href="/feedback">Feedback</a></li>
+                <li class="mynavitem acc"><a href="/logout">Logout</a></li>
+            {% else %}
+                <li class="mynavitem acc"><a href="/signUp">Sign Up</a></li>
+                <li class="mynavitem acc"><a href="/login">Login</a></li>
+            {% endif %}
+            
+        </ul>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %} 
+        {% if messages %} 
+            {% for category, message in messages %} 
+                {% if category == 'error' %}
+                    <div class="alert alert-danger alter-dismissable fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                {% else %}
+                    <div class="alert alert-success alter-dismissable fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                {% endif %} 
+            {% endfor %} 
+        {% endif %} 
+    {% endwith %}
+
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+    
+    <script type="text/javascript" src="{{url_for('static', filename='scripts.js')}}"></script>
+</body>
+</html>

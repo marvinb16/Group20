@@ -1,0 +1,28 @@
+{% extends "base.html" %} {% block title %}Search Markets{% endblock %}
+
+
+{% block content%}
+    <label for="zipcode">Enter Zip Code:</label>
+    <input type="text" id="zipcode">
+    <label for="radius">Select Radius:</label>
+    <select id="radius">
+        <option value="10">10 miles</option>
+        <option value="20">20 miles</option>
+        <option value="30">30 miles</option>
+        <option value="50">50 miles</option>
+        <option value="100">100 miles</option>
+    </select>
+    <button onclick="searchFarmersMarket()">Search</button>
+
+    <table id="resultsTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Website</th>
+            </tr>
+        </thead>
+        <tbody id="results"></tbody>
+    </table>
+
+{% endblock %}

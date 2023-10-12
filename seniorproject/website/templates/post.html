@@ -1,0 +1,21 @@
+{% extends "base.html" %} {% block title %}Login{% endblock %}
+
+{% block content%}
+<h1 align="center">Posts</h1>
+<ul id="posts">
+    {% for post in activeUser.posts %}
+        <li class="postings">
+            {{activeUser.username}}
+            {{post.text}}
+            <button type="button" style="position:right" onClick="deletePost({{ post.id }})">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </li>
+    {% endfor %}
+</ul>
+    <form method="POST">
+        <textarea name="post" id="note" class="form-control"></textarea>
+        <br/>
+        <button type="submit" style= "float: right">Post</button>
+    </form>
+{% endblock %}
