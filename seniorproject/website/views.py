@@ -42,8 +42,8 @@ def search():
 
         # Check if zipcode is empty
         if not zipcode or not zipcode.isdigit() or len(zipcode) != 5:
-            error_message = "Please enter a valid 5-digit zip code."
-            return render_template("search.html", error_message=error_message, activeUser=current_user)
+            flash("Please enter a valid zipcode.", category="error")
+            return render_template("search.html", activeUser=current_user)
 
         # Call the API function from api.py
         api_response = fetch_farmers_market_data(zipcode, radius)
@@ -83,7 +83,7 @@ def market_detail(listing_id):
     # Create or update the market based on the API data
     market = create_or_update_market(api_data)
     #print(market)
-    # Fetch comments associated with the market - Not Working
+    # Fetch comments associated with the market
     comments = Comment.query.filter_by(listing_id=listing_id).all()
     if len(comments) <= 0:
         comments = None
@@ -96,5 +96,8 @@ def market_detail(listing_id):
             db.session.add(new_comment)
             db.session.commit()
             flash("New comment added.", category="success")
+            comments = Comment.query.filter_by(listing_id=listing_id).all()
+            if len(comments) <= 0:
+                comments = None
 
     return render_template("market_detail.html", market=market, comments=comments, activeUser = current_user)
