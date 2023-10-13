@@ -1,4 +1,6 @@
-from flask import Blueprint, render_template, request, flash, jsonify
+import datetime
+
+from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for
 from flask_login import login_required, current_user
 from .models import Post
 from . import db
@@ -73,19 +75,26 @@ def market_detail(listing_id):
     api_data = get_market_data(listing_id)
     #print(api_data)
 
+    if api_data is None:
+        flash("Failed to fetch market data.", category="error")
+        return redirect(url_for('views.search'))  # Redirect to the search page
+
+
     # Create or update the market based on the API data
     market = create_or_update_market(api_data)
     #print(market)
     # Fetch comments associated with the market - Not Working
-    #comments = Comment.query.filter_by(listing_id=listing_id).all()
+    comments = Comment.query.filter_by(listing_id=listing_id).all()
+    if len(comments) <= 0:
+        comments = None
 
 
     if request.method == 'POST':
         comment_text = request.form.get('comment_text')
         if comment_text:
-            new_comment = Comment(text=comment_text, user_id=current_user.id, post_id=None, listing_id=listing_id)
+            new_comment = Comment(text=comment_text, user_id=current_user.id, listing_id=listing_id)
             db.session.add(new_comment)
             db.session.commit()
             flash("New comment added.", category="success")
 
-    return render_template("market_detail.html", market=market, comments=None, activeUser = current_user)
+    return render_template("market_detail.html", market=market, comments=comments, activeUser = current_user)

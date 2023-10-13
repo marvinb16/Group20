@@ -23,8 +23,6 @@ class Comment(db.Model):
     text = db.Column(db.String(1000))
     date = db.Column(db.DateTime(timezone=True), default=func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
-    post = db.relationship('Post', backref='comments')
     listing_id = db.Column(db.String(20), db.ForeignKey('farmers_market.listing_id'), nullable=False)
     farmers_market = db.relationship('FarmersMarket', backref='comments')
 
