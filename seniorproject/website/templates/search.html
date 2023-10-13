@@ -3,18 +3,18 @@
 
 {% block content %}
     <form id="searchForm" action="/search" method="POST">
-        <label for="zipcode">Enter Zip Code:</label>
-        <input type="text" id="zipcode" name="zipcode">
-        <label for="radius">Select Radius:</label>
-        <select id="radius" name="radius">
-            <option value="10">10 miles</option>
-            <option value="20">20 miles</option>
-            <option value="30">30 miles</option>
-            <option value="50">50 miles</option>
-            <option value="100">100 miles</option>
-        </select>
-        <button type="submit">Search</button>
-    </form>
+    <label for="zipcode">Enter Zip Code:</label>
+    <input type="text" id="zipcode" name="zipcode" value="{% if request.method == 'POST' %}{{ request.form['zipcode'] }}{% endif %}">
+    <label for="radius">Select Radius:</label>
+    <select id="radius" name="radius">
+        <option value="10">10 miles</option>
+        <option value="20">20 miles</option>
+        <option value="30">30 miles</option>
+        <option value="50">50 miles</option>
+        <option value="100">100 miles</option>
+    </select>
+    <button type="submit">Search</button>
+</form>
 
     <table id="resultsTable">
         <thead>
@@ -28,7 +28,7 @@
             {% if api_response and api_response.data %}
                 {% for market in api_response.data %}
                     <tr>
-                        <td>{{ market.listing_name }}</td>
+                        <td><a href="/market/{{ market.listing_id }}">{{ market.listing_name }}</a></td>
                         <td>{{ market.location_address }}, {{ market.location_city }}, {{ market.location_state }}, {{ market.location_zipcode }}</td>
                         <td>
                             {% if market.media_website %}

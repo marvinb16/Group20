@@ -1,3 +1,4 @@
+/*
 function searchFarmersMarket() {
     const zipcode = document.getElementById('zipcode').value;
     const radius = document.getElementById('radius').value;
@@ -54,3 +55,4 @@ function deletePost(postId) {
         window.location.href="/"
     });
 }
+*/

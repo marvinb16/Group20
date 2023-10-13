@@ -3,9 +3,13 @@ from flask_login import login_required, current_user
 from .models import Post
 from . import db
 import json
-from .api import get_latest_api_call, fetch_farmers_market_data
+from .api import get_latest_api_call, fetch_farmers_market_data, get_market_data, create_or_update_market
+from .models import FarmersMarket, Comment
+
 
 views = Blueprint('views', __name__)
+
+api_response = None
 @views.route('/')
 def index():
     
@@ -28,7 +32,7 @@ def post():
 
 @views.route('/search', methods=['GET', 'POST'])
 def search():
-    api_response = None
+    global api_response
 
     if request.method == 'POST':
         zipcode = request.form.get('zipcode')
@@ -40,8 +44,9 @@ def search():
             return render_template("search.html", error_message=error_message, activeUser=current_user)
 
         # Call the API function from api.py
-        fetch_farmers_market_data(zipcode, radius)
-        api_response = get_latest_api_call()
+        api_response = fetch_farmers_market_data(zipcode, radius)
+
+
 
     return render_template("search.html", api_response=api_response, activeUser=current_user)
 
@@ -61,3 +66,26 @@ def delete_post():
             db.session.commit()
     
     return jsonify({})
+
+@views.route('/market/<listing_id>', methods=['GET', 'POST'])
+def market_detail(listing_id):
+    # Check if the market exists, if not create it
+    api_data = get_market_data(listing_id)
+    #print(api_data)
+
+    # Create or update the market based on the API data
+    market = create_or_update_market(api_data)
+    #print(market)
+    # Fetch comments associated with the market - Not Working
+    #comments = Comment.query.filter_by(listing_id=listing_id).all()
+
+
+    if request.method == 'POST':
+        comment_text = request.form.get('comment_text')
+        if comment_text:
+            new_comment = Comment(text=comment_text, user_id=current_user.id, post_id=None, listing_id=listing_id)
+            db.session.add(new_comment)
+            db.session.commit()
+            flash("New comment added.", category="success")
+
+    return render_template("market_detail.html", market=market, comments=None, activeUser = current_user)
