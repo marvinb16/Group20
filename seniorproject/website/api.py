@@ -34,6 +34,9 @@ def get_latest_api_call():
 def get_market_data(listing_id):
     # Fetch market data based on the listing_id from the provided data
     global api_response
+    if api_response is None:
+        market_data = FarmersMarket.query.filter_by(listing_id=listing_id).first()
+        return market_data
     market_data = get_market_data_from_api(api_response, listing_id)
     return market_data
 def create_or_update_market(market_data):
@@ -56,6 +59,8 @@ def create_or_update_market(market_data):
     return market
 
 def get_market_data_from_api(api_response, listing_id):
+    if api_response is None or 'data' not in api_response:
+        return None
     market_data_list = api_response.get('data', [])
 
     market_data = None
