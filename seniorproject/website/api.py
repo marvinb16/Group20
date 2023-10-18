@@ -60,6 +60,7 @@ def create_or_update_market(market_data):
 
 def get_market_data_from_api(api_response, listing_id):
     if api_response is None or 'data' not in api_response:
+        get_market_data(listing_id)
         return None
     market_data_list = api_response.get('data', [])
 
