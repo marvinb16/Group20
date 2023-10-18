@@ -2,7 +2,7 @@ import datetime
 
 from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for
 from flask_login import login_required, current_user
-from .models import Post
+from .models import FarmersMarket, Comment, UserMarketVisit, ZipSearches
 from . import db
 import json
 from .api import get_latest_api_call, fetch_farmers_market_data, get_market_data, create_or_update_market
@@ -85,6 +85,10 @@ def market_detail(listing_id):
         return redirect(url_for('views.search'))  # Redirect to the search page
 
     if current_user.is_authenticated:
+        ## if user has visited market
+        existing_visit = UserMarketVisit.query.filter_by(user_id=current_user.id, market_id=listing_id).first()
+
+    if not existing_visit:
         visit = UserMarketVisit(user_id=current_user.id, market_id=listing_id)
         db.session.add(visit)
         db.session.commit()
@@ -119,6 +123,8 @@ def recommendations():
     
     # fetch & display market details
     recommended_markets = FarmersMarket.query.filter(FarmersMarket.listing_id.in_(recommended_market_ids)).all()
+    if len(recommended_markets) <= 0:
+        recommended_markets = None
     
     return render_template('recommendations.html', recommended_markets=recommended_markets, activeUser=current_user)
 
