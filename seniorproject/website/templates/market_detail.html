@@ -6,14 +6,7 @@
     <p>Location: {{ market.location_address }}, {{ market.location_city }}, {{ market.location_state }}, {{ market.location_zipcode }}</p>
     <p>Website: <a href="{{ market.media_website }}" target="_blank">{{ market.media_website }}</a></p>
 
-    {% if activeUser.is_authenticated %}
-        <h2>Add a Comment</h2>
-        <form method="POST" action="/market/{{ market.listing_id }}">
-            <textarea name="comment_text" id="comment" class="form-control" placeholder="Add your comment"></textarea>
-            <br/>
-            <button type="submit">Add Comment</button>
-        </form>
-    {% endif %}
+
 
     <h2>Comments</h2>
     {% if comments %}
@@ -35,6 +28,16 @@
         </table>
     {% else %}
         <p>No comments yet.</p>
+    {% endif %}
+
+
+    {% if activeUser.is_authenticated %}
+        <h2>Add a Comment</h2>
+        <form method="POST" action="/market/{{ market.listing_id }}">
+            <textarea name="comment_text" id="comment" class="form-control" placeholder="Add your comment"></textarea>
+            <br/>
+            <button type="submit">Add Comment</button>
+        </form>
     {% endif %}
 
     <a href="/search">Back to Search</a>
