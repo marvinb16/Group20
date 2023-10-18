@@ -88,10 +88,10 @@ def market_detail(listing_id):
         ## if user has visited market
         existing_visit = UserMarketVisit.query.filter_by(user_id=current_user.id, market_id=listing_id).first()
 
-    if not existing_visit:
-        visit = UserMarketVisit(user_id=current_user.id, market_id=listing_id)
-        db.session.add(visit)
-        db.session.commit()
+        if not existing_visit:
+            visit = UserMarketVisit(user_id=current_user.id, market_id=listing_id)
+            db.session.add(visit)
+            db.session.commit()
 
     # Create or update the market based on the API data
     market = create_or_update_market(api_data)
