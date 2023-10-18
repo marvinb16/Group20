@@ -7,6 +7,7 @@ from . import db
 import json
 from .api import get_latest_api_call, fetch_farmers_market_data, get_market_data, create_or_update_market
 from .models import FarmersMarket, Comment
+import requests
 
 
 views = Blueprint('views', __name__)
@@ -14,7 +15,11 @@ views = Blueprint('views', __name__)
 api_response = None
 @views.route('/')
 def index():
+    recommended_market_ids = []
+    if current_user.is_authenticated:
+        recommended_market_ids = recommend_markets_for_user(current_user.id)
     
+    recommended_markets = FarmersMarket.query.filter(FarmersMarket.listing_id.in_(recommended_market_ids)).all()
     return render_template("index.html", activeUser = current_user)
 
 @views.route('/post', methods=['GET', 'POST'])
@@ -79,6 +84,10 @@ def market_detail(listing_id):
         flash("Failed to fetch market data.", category="error")
         return redirect(url_for('views.search'))  # Redirect to the search page
 
+    if current_user.is_authenticated:
+        visit = UserMarketVisit(user_id=current_user.id, market_id=listing_id)
+        db.session.add(visit)
+        db.session.commit()
 
     # Create or update the market based on the API data
     market = create_or_update_market(api_data)
@@ -101,3 +110,31 @@ def market_detail(listing_id):
                 comments = None
 
     return render_template("market_detail.html", market=market, comments=comments, activeUser = current_user)
+
+@views.route('/recommendations', methods=['GET'])
+@login_required
+def recommendations():
+    # fetch rec markets for active user
+    recommended_market_ids = recommend_markets_for_user(current_user.id)
+    
+    # fetch & display market details
+    recommended_markets = FarmersMarket.query.filter(FarmersMarket.listing_id.in_(recommended_market_ids)).all()
+    
+    return render_template('recommendations.html', recommended_markets=recommended_markets, activeUser=current_user)
+
+def recommend_markets_for_user(user_id):
+    # recent click markets
+    visited_markets = UserMarketVisit.query.filter_by(user_id=user_id).all()
+    visited_market_ids = [v.market_id for v in visited_markets]
+    
+    # for zip searches
+    recent_zip_searches = ZipSearches.query.filter_by(user_id=user_id).order_by(ZipSearches.timestamp.desc()).limit(5).all()
+    recent_zip_codes = [z.zip_code for z in recent_zip_searches]
+    
+  
+    markets_in_recent_zip_codes = FarmersMarket.query.filter(FarmersMarket.location_zipcode.in_(recent_zip_codes)).all()
+    
+    # combine / no dups
+    recommended_market_ids = list(set(visited_market_ids + [m.listing_id for m in markets_in_recent_zip_codes]))
+    
+    return recommended_market_ids
