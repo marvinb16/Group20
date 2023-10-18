@@ -2,7 +2,7 @@ import datetime
 
 from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for
 from flask_login import login_required, current_user
-from .models import FarmersMarket, Comment, UserMarketVisit, ZipSearches
+from .models import FarmersMarket, Comment, UserMarketVisit, ZipSearches, Post
 from . import db
 import json
 from .api import get_latest_api_call, fetch_farmers_market_data, get_market_data, create_or_update_market
