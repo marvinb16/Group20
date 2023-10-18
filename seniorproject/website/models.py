@@ -49,3 +49,15 @@ class FarmersMarket(db.Model):
     location_street = db.Column(db.String(200))
     location_zipcode = db.Column(db.String(20))
 
+class UserMarketVisit(db.Model):
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    market_id = db.Column(db.Integer, db.ForeignKey('farmers_market.listing_id'), primary_key=True)
+    timestamp = db.Column(db.DateTime(timezone=True), default=func.now())
+
+class ZipSearches(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    zip_code = db.Column(db.String(20))
+    timestamp = db.Column(db.DateTime(timezone=True), default=func.now())
+
+
