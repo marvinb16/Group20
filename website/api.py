@@ -32,22 +32,41 @@ def get_latest_api_call():
     return api_response
 
 def get_market_data(listing_id):
-    # Fetch market data based on the listing_id from the provided data
-    global api_response
-    if api_response is None:
-        market_data = FarmersMarket.query.filter_by(listing_id=listing_id).first()
-        return market_data
-    market_data = get_market_data_from_api(api_response, listing_id)
+    # Try to fetch market data from the database
+    market_data = FarmersMarket.query.filter_by(listing_id=listing_id).first()
+
+    if market_data is None:
+        # Fetch market data from the API if not found in the database
+        api_data = get_market_data_from_api(api_response, listing_id)
+        if api_data:
+            # Create or update the market in the database
+            market_data = create_or_update_market(api_data)
+
     return market_data
+
 def create_or_update_market(market_data):
-    listing_id = market_data.get('listing_id')
+
+    # Millions of data format checks because for some reason its all in different structures.
+    if isinstance(market_data, dict):
+        # If market_data is a dictionary
+        listing_id = market_data.get('listing_id')
+    elif isinstance(market_data, FarmersMarket):
+        # If market_data is a FarmersMarket object
+        listing_id = market_data.listing_id
+    else:
+        print("Error: Unsupported market_data type")
+        return None
+
+    if not listing_id:
+        print("Error: 'listing_id' not found in market_data")
+        return None
 
     # Check if the market already exists
     market = FarmersMarket.query.get(listing_id)
 
     if not market:
         # Create a new market
-        market = FarmersMarket(**market_data)
+        market = FarmersMarket(**market_data)  # Pass the attributes directly
         db.session.add(market)
     else:
         # Update the existing market
@@ -58,13 +77,20 @@ def create_or_update_market(market_data):
 
     return market
 
-def get_market_data_from_api(api_response, listing_id):
-    if api_response is None or 'data' not in api_response:
-        get_market_data(listing_id)
-        return None
-    market_data_list = api_response.get('data', [])
 
-    market_data = None
+def get_market_data_from_api(api_response, listing_id):
+
+    if api_response is None or 'data' not in api_response:
+        print("Error: 'data' key not found in API response")
+        return None
+
+    market_data_list = api_response['data']
+    market_data = next((item for item in market_data_list if item.get('listing_id') == listing_id), None)
+
+    if market_data is None:
+        print(f"Error: Market data not found for listing_id {listing_id}")
+        return None
+
     for item in market_data_list:
         if item.get('listing_id') == listing_id:
             market_data = {

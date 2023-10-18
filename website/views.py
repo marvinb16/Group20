@@ -77,12 +77,11 @@ def delete_post():
 @views.route('/market/<listing_id>', methods=['GET', 'POST'])
 def market_detail(listing_id):
     # Check if the market exists, if not create it
-    api_data = get_market_data(listing_id)
-    #print(api_data)
+    market = get_market_data(listing_id)
 
-    if api_data is None:
+    if market is None:
         flash("Failed to fetch market data.", category="error")
-        return redirect(url_for('views.search'))  # Redirect to the search page
+        return redirect(url_for('views.search'))
 
     if current_user.is_authenticated:
         ## if user has visited market
@@ -93,9 +92,6 @@ def market_detail(listing_id):
             db.session.add(visit)
             db.session.commit()
 
-    # Create or update the market based on the API data
-    market = create_or_update_market(api_data)
-    #print(market)
     # Fetch comments associated with the market
     comments = Comment.query.filter_by(listing_id=listing_id).all()
     if len(comments) <= 0:
