@@ -1,3 +1,5 @@
+import json
+import re
 import requests
 
 from .models import FarmersMarket
@@ -5,9 +7,74 @@ from . import db
 
 api_response = None
 
+def extract_data_structure(response):
+    # Define a regular expression pattern to match the 'data' structure
+    response = str(response)
+    start_index = response.find('{"data":')
+
+    if start_index != -1:
+        # Extract the data after the specified string
+        data_string = response[start_index:]
+        print("DEBUG DATA PULL " + data_string)
+
+        # Attempt to parse the extracted data as JSON
+        try:
+            json_data = json.loads(data_string)
+            print("EXTRACTED JSON:", json_data)
+            print(type(json_data))
+
+            if 'data' in json_data:
+                extracted_data = json_data
+                print("EXTRACTED JSON:", extracted_data)
+                print(type(extracted_data))
+                return extracted_data['data']
+            else:
+                print("No 'data' found in JSON")
+                return None
+        except json.JSONDecodeError:
+            print("Invalid JSON data")
+            return None
+    else:
+        print("String not found")
+        return None
+
+def format_market_data(market_data_list):
+    # This function formats the market data as specified
+    formatted_data = {
+        "data": []
+    }
+    for item in market_data_list:
+        formatted_item = {
+            "directory_type": "farmersmarket",
+            "directory_name": "farmers market",
+            "updatetime": "Mar 20th, 2023",
+            "listing_image": "default-farmersmarket-4-3.jpg",
+            "listing_id": item.get('listing_id'),
+            "listing_name": item.get('listing_name'),
+            "listing_desc": item.get('listing_desc'),
+            "brief_desc": "",
+            "mydesc": "",
+            "contact_name": item.get('contact_name'),
+            "contact_email": item.get('contact_email'),
+            "contact_phone": item.get('contact_phone'),
+            "media_website": item.get('media_website'),
+            "media_facebook": item.get('media_facebook'),
+            "media_twitter": item.get('media_twitter'),
+            "media_instagram": item.get('media_instagram'),
+            "media_pinterest": item.get('media_pinterest'),
+            "media_youtube": item.get('media_youtube'),
+            "media_blog": item.get('media_blog'),
+            "location_address": item.get('location_address'),
+            "location_state": item.get('location_state'),
+            "location_city": item.get('location_city'),
+            "location_street": item.get('location_street'),
+            "location_zipcode": item.get('location_zipcode'),
+        }
+        formatted_data["data"].append(formatted_item)
+    return formatted_data
+
 #returns the json structure
 def fetch_farmers_market_data(zipcode, radius):
-    global api_response
     apikey = 'tlnUddS4mT'
     apiUrl = f'https://www.usdalocalfoodportal.com/api/farmersmarket/?apikey={apikey}&zip={zipcode}&radius={radius}'
 
@@ -18,14 +85,29 @@ def fetch_farmers_market_data(zipcode, radius):
     try:
         response = requests.get(apiUrl, headers=headers)
         response.raise_for_status()
-        api_response = response.json()
-        #print(api_response)
 
-        return api_response
+        try:
+            api_response = response.json()
+            if 'data' in api_response:
+                return api_response['data']
+            else:
+                print('No data found in the response:', api_response)
+                return None
+        except json.JSONDecodeError as e:
+            print('Invalid JSON response:', str(e))
+            # Handle the invalid JSON response here
+            modified_response = extract_data_structure(response.text)
+            if modified_response:
+                return format_market_data(modified_response) if modified_response else None
+            return None
     except requests.exceptions.RequestException as e:
         print('Error fetching data:', str(e))
+        # Handle the error and check if 'data' exists in the error response
+        error_response = response.text if 'response' in locals() else None
+        if error_response and 'data' in error_response:
+            modified_response = extract_data_structure(error_response)
+            return modified_response
         return None
-
 
 #Getter for api call
 def get_latest_api_call():
@@ -79,7 +161,6 @@ def create_or_update_market(market_data):
 
 
 def get_market_data_from_api(api_response, listing_id):
-
     if api_response is None or 'data' not in api_response:
         print("Error: 'data' key not found in API response")
         return None
@@ -90,29 +171,5 @@ def get_market_data_from_api(api_response, listing_id):
     if market_data is None:
         print(f"Error: Market data not found for listing_id {listing_id}")
         return None
-
-    for item in market_data_list:
-        if item.get('listing_id') == listing_id:
-            market_data = {
-                "listing_id": item.get('listing_id'),
-                "listing_name": item.get('listing_name'),
-                "listing_desc": item.get('listing_desc'),
-                "contact_name": item.get('contact_name'),
-                "contact_email": item.get('contact_email'),
-                "contact_phone": item.get('contact_phone'),
-                "media_website": item.get('media_website'),
-                "media_facebook": item.get('media_facebook'),
-                "media_twitter": item.get('media_twitter'),
-                "media_instagram": item.get('media_instagram'),
-                "media_pinterest": item.get('media_pinterest'),
-                "media_youtube": item.get('media_youtube'),
-                "media_blog": item.get('media_blog'),
-                "location_address": item.get('location_address'),
-                "location_state": item.get('location_state'),
-                "location_city": item.get('location_city'),
-                "location_street": item.get('location_street'),
-                "location_zipcode": item.get('location_zipcode')
-            }
-            break
 
     return market_data
