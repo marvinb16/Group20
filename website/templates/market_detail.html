@@ -12,12 +12,18 @@
         {% elif market.contact_phone %}
             Phone: {{ market.contact_phone }}
         {% else %}
+            {% if not refresh_page %}
+                <script>
+                    {% if not refresh_page %}
+                        location.reload();
+                    {% endif %}
+                </script>
+            {% set refresh_page = True %}
+            {% endif %}
             No Contact Info Available.
         {% endif %}
 
     </p>
-
-
 
     <h2>Comments</h2>
     {% if comments %}
@@ -53,10 +59,7 @@
 
     <a href="/search">Back to Search</a>
 
-    <script>
-        // Refresh page after half a second
-        setTimeout(function() {
-            location.reload();
-        }, 500);
-    </script>
+
+
+
 {% endblock %}

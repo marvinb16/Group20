@@ -8,6 +8,7 @@ import json
 from .api import get_latest_api_call, fetch_farmers_market_data, get_market_data, create_or_update_market
 from .models import FarmersMarket, Comment
 import requests
+import time
 
 
 views = Blueprint('views', __name__)
@@ -82,7 +83,11 @@ def delete_post():
 @views.route('/market/<listing_id>', methods=['GET', 'POST'])
 def market_detail(listing_id):
     # Check if the market exists, if not create it
+
+
     market = get_market_data(listing_id)
+    refresh_page = False
+
 
     if market is None:
         flash("Failed to fetch market data.", category="error")
