@@ -51,6 +51,12 @@ def search():
             flash("Please enter a valid zipcode.", category="error")
             return render_template("search.html", activeUser=current_user)
 
+        # Save the zipcode search to the database if user is authenticated
+        if current_user.is_authenticated:
+            zip_search = ZipSearches(zip_code=zipcode, user_id=current_user.id, timestamp=datetime.datetime.now())
+            db.session.add(zip_search)
+            db.session.commit()
+
         # Call the API function from api.py
         try:
             # Call the API function from api.py
