@@ -3,6 +3,11 @@
 
 {% block content %}
     <h1>{{ market.listing_name }} Details</h1>
+    {% if not market.listing_name %}
+        <script>
+            location.reload();
+        </script>
+    {% endif %}
     <p><a href="https://www.google.com/maps?q={{ market.location_street }}, {{ market.location_city }}, {{ market.location_state }}, {{ market.location_zipcode }}" target="_blank">{{ market.location_street }}, {{ market.location_city }}, {{ market.location_state }}, {{ market.location_zipcode }}</a></p>
     <p>
         {% if market.media_website %}
@@ -12,14 +17,7 @@
         {% elif market.contact_phone %}
             Phone: {{ market.contact_phone }}
         {% else %}
-            {% if not refresh_page %}
-                <script>
-                    {% if not refresh_page %}
-                        location.reload();
-                    {% endif %}
-                </script>
-            {% set refresh_page = True %}
-            {% endif %}
+
             No Contact Info Available.
         {% endif %}
 
