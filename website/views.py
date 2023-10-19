@@ -139,14 +139,14 @@ def recommend_markets_for_user(user_id):
     visited_markets = UserMarketVisit.query.filter_by(user_id=user_id).all()
     visited_market_ids = [v.market_id for v in visited_markets]
     
-    # for zip searches
+   # For recent zip searches
     recent_zip_searches = ZipSearches.query.filter_by(user_id=user_id).order_by(ZipSearches.timestamp.desc()).limit(5).all()
     recent_zip_codes = [z.zip_code for z in recent_zip_searches]
     
-  
-    markets_in_recent_zip_codes = FarmersMarket.query.filter(FarmersMarket.location_zipcode.in_(recent_zip_codes)).all()
-    
-    # combine / no dups
-    recommended_market_ids = list(set(visited_market_ids + [m.listing_id for m in markets_in_recent_zip_codes]))
+    # Fetch markets within the searched zip codes
+    markets_in_searched_zip_codes = FarmersMarket.query.filter(FarmersMarket.location_zipcode.in_(recent_zip_codes)).all()
+
+    # Combine visited markets and markets from searched ZIP codes (no duplicates)
+    recommended_market_ids = list(set(visited_market_ids + [m.listing_id for m in markets_in_searched_zip_codes]))
     
     return recommended_market_ids
