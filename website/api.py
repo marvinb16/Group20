@@ -8,25 +8,25 @@ from . import db
 api_response = None
 
 def extract_data_structure(response):
-    # Define a regular expression pattern to match the 'data' structure
+    # Pattern Recognition
     response = str(response)
     start_index = response.find('{"data":')
 
     if start_index != -1:
-        # Extract the data after the specified string
+        # Extract data at the index of found data
         data_string = response[start_index:]
-        print("DEBUG DATA PULL " + data_string)
+        #print("DEBUG DATA PULL " + data_string)
 
         # Attempt to parse the extracted data as JSON
         try:
             json_data = json.loads(data_string)
-            print("EXTRACTED JSON:", json_data)
-            print(type(json_data))
+            #print("EXTRACTED JSON:", json_data)
+            #print(type(json_data))
 
             if 'data' in json_data:
                 extracted_data = json_data
-                print("EXTRACTED JSON:", extracted_data)
-                print(type(extracted_data))
+                #print("EXTRACTED JSON:", extracted_data)
+                #print(type(extracted_data))
                 return extracted_data['data']
             else:
                 print("No 'data' found in JSON")
@@ -39,7 +39,7 @@ def extract_data_structure(response):
         return None
 
 def format_market_data(market_data_list):
-    # This function formats the market data as specified
+    # Formats to regular format because its in a weird text format not json
     formatted_data = {
         "data": []
     }
@@ -117,7 +117,7 @@ def get_market_data(listing_id):
 
     if market_data is None:
         # Fetch market data from the API if not found in the database
-        print(api_response)
+        #print(api_response)
 
         api_data = get_market_data_from_api(api_response, listing_id)
         if api_data:
@@ -170,7 +170,7 @@ def create_or_update_market(market_data_list):
 
 
 def get_market_data_from_api(api_response, listing_id):
-    print ("DEBUG", api_response)
+    #print ("DEBUG", api_response)
     if api_response is None or 'data' not in api_response:
         print("Error: 'data' key not found in API response")
         return None

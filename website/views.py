@@ -54,7 +54,7 @@ def search():
         try:
             # Call the API function from api.py
             api_response = fetch_farmers_market_data(zipcode, radius)
-            print("DEBUG SEARCH CALL: ", api_response)
+            #print("DEBUG SEARCH CALL: ", api_response)
         except Exception as e:
             flash(f"An error occurred while fetching data: {str(e)}", category="error")
             api_response = {}  # Reset api_response in case of an error
