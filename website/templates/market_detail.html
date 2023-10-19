@@ -3,8 +3,19 @@
 
 {% block content %}
     <h1>{{ market.listing_name }} Details</h1>
-    <p>Location: {{ market.location_address }}, {{ market.location_city }}, {{ market.location_state }}, {{ market.location_zipcode }}</p>
-    <p>Website: <a href="{{ market.media_website }}" target="_blank">{{ market.media_website }}</a></p>
+    <p><a href="https://www.google.com/maps?q={{ market.location_street }}, {{ market.location_city }}, {{ market.location_state }}, {{ market.location_zipcode }}" target="_blank">{{ market.location_street }}, {{ market.location_city }}, {{ market.location_state }}, {{ market.location_zipcode }}</a></p>
+    <p>
+        {% if market.media_website %}
+            Website: <a href="{{ market.media_website }}" target="_blank">{{ market.media_website }}</a>
+        {% elif market.media_facebook %}
+            Facebook: <a href="{{ market.media_facebook }}" target="_blank">{{ market.media_facebook }}</a>
+        {% elif market.contact_phone %}
+            Phone: {{ market.contact_phone }}
+        {% else %}
+            No Contact Info Available.
+        {% endif %}
+
+    </p>
 
 
 

@@ -19,7 +19,7 @@ def fetch_farmers_market_data(zipcode, radius):
         response = requests.get(apiUrl, headers=headers)
         response.raise_for_status()
         api_response = response.json()
-        print(api_response)
+        #print(api_response)
 
         return api_response
     except requests.exceptions.RequestException as e:

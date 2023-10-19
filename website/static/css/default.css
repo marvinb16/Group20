@@ -58,3 +58,12 @@ header {
 #posts {
     list-style-type: none;
 }
+
+.table-striped tr:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+
+.table-striped td, .table-striped th {
+    border: 1px solid #dddddd;
+    padding: 8px;
+}
