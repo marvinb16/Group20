@@ -76,6 +76,7 @@ def fetch_farmers_market_data(zipcode, radius):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134'
     }
+    #print(apiUrl)
 
     try:
         response = requests.get(apiUrl, headers=headers)
@@ -84,7 +85,7 @@ def fetch_farmers_market_data(zipcode, radius):
         try:
             api_response = response.json()
             if 'data' in api_response:
-                return api_response['data']
+                return api_response
             else:
                 print('No data found in the response:', api_response)
                 return None
