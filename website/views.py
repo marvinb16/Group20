@@ -57,7 +57,7 @@ def search():
             api_response = fetch_farmers_market_data(zipcode, radius)
             #print("DEBUG SEARCH CALL: ", api_response)
         except Exception as e:
-            flash(f"An error occurred while fetching data: {str(e)}", category="error")
+            flash(f"An error occurred: Please check if {zipcode} is a valid zip code.", category="error")
             api_response = {}  # Reset api_response in case of an error
 
         if current_user.is_authenticated:

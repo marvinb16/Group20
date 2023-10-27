@@ -3,11 +3,40 @@ import requests
 from .models import FarmersMarket
 from . import db
 
+import re
+import json
+
 api_response = None
+#CHANGE TO FALSE FOR LIVE API CALL
+API_TEST_FLAG = False
+
+def _USDA_Error_Filter(api_error):
+    #Private function for the error handling
+    pattern = r'{"data":\[(.*?)\]}'
+
+    match = re.search(pattern, api_error)
+    #print(f"match: {match.group(0)}")
+    if match:
+        #group 0 returns the full string including the pattern
+        json_data = match.group(0)
+
+        #print(f"data Type: {type(json_data)}")
+        #print(f"data : {json_data}")
+        try:
+            #
+            cleaned_data = json.loads(json_data)
+            return cleaned_data
+        except json.JSONDecodeError as e:
+            print(f"Json data cannot be parsed: {e}")
+            return None
+    else:
+        print(f"Api data could not be filtered: {api_error}")
+        return None
 
 #returns the json structure
 def fetch_farmers_market_data(zipcode, radius):
     global api_response
+    global API_TEST_FLAG
     apikey = 'tlnUddS4mT'
     apiUrl = f'https://www.usdalocalfoodportal.com/api/farmersmarket/?apikey={apikey}&zip={zipcode}&radius={radius}'
 
@@ -16,15 +45,29 @@ def fetch_farmers_market_data(zipcode, radius):
     }
 
     try:
+        #Test Branch, Default Off
+        if (API_TEST_FLAG):
+            with open('USDA_API_ERROR.txt', 'r') as file:
+
+                contents = file.read()
+                print("TEST BRANCH IS ACTIVE. WILL NOT DISPLAY LIVE DATA. DISABLE API_TEST_FLAG IN API.PY")
+
+                filtered_contents = _USDA_Error_Filter(contents)
+                api_response = filtered_contents
+
+                return filtered_contents
+
         response = requests.get(apiUrl, headers=headers)
         response.raise_for_status()
         api_response = response.json()
-        #print(api_response)
 
         return api_response
+
     except requests.exceptions.RequestException as e:
-        print('Error fetching data:', str(e))
-        return None
+
+        print(f"Error in data return. Attempting to filter.")
+
+        return _USDA_Error_Filter(response)
 
 
 #Getter for api call
