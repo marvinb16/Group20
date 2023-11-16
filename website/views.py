@@ -2,7 +2,10 @@ import datetime
 
 from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for
 from flask_login import login_required, current_user
+from flask_mail import Mail, Message
 from .models import FarmersMarket, Comment, UserMarketVisit, ZipSearches, Post
+from .forms import FeedbackForm
+from . import mail
 from . import db
 import json
 from .api import get_latest_api_call, fetch_farmers_market_data, get_market_data, create_or_update_market
@@ -67,11 +70,6 @@ def search():
 
 
     return render_template("search.html", api_response=api_response, activeUser=current_user)
-
-@views.route('/feedback')
-@login_required
-def feedback():
-    return render_template("feedback.html", activeUser = current_user)
 
 @views.route('/deletepost', methods=['POST'])
 def delete_post():
@@ -159,3 +157,14 @@ def recommend_markets_for_user(user_id):
     recommended_market_ids = list(set(visited_market_ids + [m.listing_id for m in markets_in_searched_zip_codes]))
 
     return recommended_market_ids
+
+@views.route('/feedback', methods=['GET', 'POST'])
+def feedback():
+    form = FeedbackForm()
+    if form.validate_on_submit():
+        msg = Message("Feedback from " + form.name.data, sender=form.email.data, recipients=['marketmapperfeedback@gmail.com'])
+        msg.body = form.feedback.data
+        mail.send(msg)
+        flash('Your feedback has been sent!')
+        return redirect(url_for('auth.login'))  # Adjust as necessary
+    return render_template('feedback2.html', form=form, activeUser=current_user)
