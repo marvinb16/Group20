@@ -1,0 +1,13 @@
+<!-- templates/feedback.html -->
+
+{% extends 'base.html' %}  <!-- Replace with your base template if different -->
+{% block content %}
+    <h1>Feedback</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        {{ form.name.label }} {{ form.name() }}<br>
+        {{ form.email.label }} {{ form.email() }}<br>
+        {{ form.feedback.label }} {{ form.feedback() }}<br>
+        {{ form.submit() }}
+    </form>
+{% endblock %}
