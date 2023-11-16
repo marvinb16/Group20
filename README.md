@@ -6,3 +6,6 @@ Required pips:
 <br>pip install flask_sqlalchemy
 <br>pip install Werkzeug==2.3.7
 <br>pip install requests
+<br>pip install Flask-Mail
+<br>pip install Flask-WTF
+<br>pip install email_validator
