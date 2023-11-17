@@ -2,10 +2,11 @@
 {% block title %}Search Markets{% endblock %}
 
 {% block content %}
+<div id="content">
     <form id="searchForm" action="/search" method="POST">
-        <label for="zipcode">Enter Zip Code:</label>
-        <input type="text" id="zipcode" name="zipcode" value="{% if request.method == 'POST' %}{{ request.form['zipcode'] }}{% endif %}">
-        <label for="radius">Select Radius:</label>
+        <label for="zipcode" style="color:black">Enter Zip Code:</label>
+        <input type="text" style="color:black" id="zipcode" name="zipcode" value="{% if request.method == 'POST' %}{{ request.form['zipcode'] }}{% endif %}">
+        <label for="radius" style="color:black">Select Radius:</label>
         <select id="radius" name="radius">
             <option value="10">10 miles</option>
             <option value="20">20 miles</option>
@@ -50,4 +51,5 @@
             {% endif %}
         </tbody>
     </table>
+</div>
 {% endblock %}

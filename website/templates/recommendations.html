@@ -3,8 +3,9 @@
 {% block title %}Recommendations{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2>Your Recommendations</h2>
+<div id="content">
+<div class="container mt-5" >
+    <h2 id="recommendations" >Your Recommendations</h2>
     <hr>
     {% if recommended_markets and recommended_markets|length > 0 %}
     <ul class="list-group">
@@ -19,5 +20,6 @@
     {% else %}
     <p class="alert alert-info">No recommendations available at the moment. Check back later!</p>
     {% endif %}
+</div>
 </div>
 {% endblock %}

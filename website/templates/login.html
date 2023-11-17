@@ -2,9 +2,10 @@
 
 {% block content%}
 <form method="POST">
-    <h3>Login</h3>
+    <div id="content">
+    <h3 style="color: black">Login</h3>
     <div>
-        <label for="username">Username</label>
+        <label for="username" style="color: black">Username:</label>
         <input 
             type="text" 
             id="username" 
@@ -13,7 +14,7 @@
         />
     </div>
     <div>
-        <label for="password">Password</label>
+        <label for="password" style="color: black">Password:</label>
         <input 
             type="password" 
             id="password" 
@@ -23,5 +24,6 @@
     </div>
     <br />
     <button type="submit">Submit</button>
+</div>
 </form>
 {% endblock %}

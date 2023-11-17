@@ -2,14 +2,15 @@
 {% block title %}Market Detail{% endblock %}
 
 {% block content %}
-    <h1>{{ market.listing_name }} Details</h1>
+<div id="content">
+    <h1 style="color: black">{{ market.listing_name }} Details</h1>
     {% if not market.listing_name %}
         <script>
             location.reload();
         </script>
     {% endif %}
     <p><a href="https://www.google.com/maps?q={{ market.location_street }}, {{ market.location_city }}, {{ market.location_state }}, {{ market.location_zipcode }}" target="_blank">{{ market.location_street }}, {{ market.location_city }}, {{ market.location_state }}, {{ market.location_zipcode }}</a></p>
-    <p>
+    <p style="color: black">
         {% if market.media_website %}
             Website: <a href="{{ market.media_website }}" target="_blank">{{ market.media_website }}</a>
         {% elif market.media_facebook %}
@@ -23,31 +24,31 @@
 
     </p>
 
-    <h2>Comments</h2>
+    <h2 style="color: black">Comments</h2>
     {% if comments %}
         <table>
             <thead>
                 <tr>
-                    <th>Comment</th>
-                    <th>Date</th>
+                    <th style="color: black">Comment</th>
+                    <th style="color: black">Date</th>
                 </tr>
             </thead>
             <tbody>
                 {% for comment in comments %}
                     <tr>
-                        <td>{{ comment.text }}</td>
-                        <td>{{ comment.date }}</td>
+                        <td style="color: black">{{ comment.text }}</td>
+                        <td style="color: black">{{ comment.date }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% else %}
-        <p>No comments yet.</p>
+        <p style="color: black">No comments yet.</p>
     {% endif %}
 
 
     {% if activeUser.is_authenticated %}
-        <h2>Add a Comment</h2>
+        <h2 style="color: black">Add a Comment</h2>
         <form method="POST" action="/market/{{ market.listing_id }}">
             <textarea name="comment_text" id="comment" class="form-control" placeholder="Add your comment"></textarea>
             <br/>
@@ -58,6 +59,6 @@
     <a href="/search">Back to Search</a>
 
 
-
+</div>
 
 {% endblock %}

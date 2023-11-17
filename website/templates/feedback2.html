@@ -2,12 +2,14 @@
 
 {% extends 'base.html' %}  <!-- Replace with your base template if different -->
 {% block content %}
-    <h1>Feedback</h1>
-    <form method="POST">
+<div id="content">
+    <h1 style="color: black">Feedback</h1>
+    <form method="POST" style="color: black">
         {{ form.hidden_tag() }}
         {{ form.name.label }} {{ form.name() }}<br>
         {{ form.email.label }} {{ form.email() }}<br>
         {{ form.feedback.label }} {{ form.feedback() }}<br>
         {{ form.submit() }}
     </form>
+</div>
 {% endblock %}
