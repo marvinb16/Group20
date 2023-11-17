@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Recommendations{% endblock %}
+
+{% block content %}
+<div id="content">
+<div class="container mt-5" >
+    <h2 id="recommendations" >Your Recommendations</h2>
+    <hr>
+    {% if recommended_markets and recommended_markets|length > 0 %}
+    <ul class="list-group">
+        {% for item in recommended_markets %}
+        <li class="list-group-item">
+            <a href="/market/{{ item.listing_id }}">{{ item.listing_name }} - {{ item.location_zipcode }}
+            </a>
+        </li>
+        {% endfor %}
+
+    </ul>
+    {% else %}
+    <p class="alert alert-info">No recommendations available at the moment. Check back later!</p>
+    {% endif %}
+</div>
+</div>
+{% endblock %}
