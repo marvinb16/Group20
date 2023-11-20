@@ -3,7 +3,7 @@ import datetime
 from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for
 from flask_login import login_required, current_user
 from flask_mail import Mail, Message
-from .models import FarmersMarket, Comment, UserMarketVisit, ZipSearches, Post
+from .models import FarmersMarket, Comment, UserMarketVisit, ZipSearches, Post, User, PageViews
 from .forms import FeedbackForm
 from . import mail
 from . import db
@@ -83,6 +83,19 @@ def delete_post():
     
     return jsonify({})
 
+@views.route('/deletecomment', methods=['POST'])
+def delete_comment():
+    comment = json.loads(request.data)
+    commentId = comment['commentId']
+    comment = Comment.query.get(commentId)
+    if comment:
+        if comment.user_id == current_user.id:
+            db.session.delete(comment)
+            db.session.commit()
+    
+    return jsonify({})
+
+
 @views.route('/market/<listing_id>', methods=['GET', 'POST'])
 def market_detail(listing_id):
     # Check if the market exists, if not create it
@@ -105,11 +118,22 @@ def market_detail(listing_id):
             db.session.add(visit)
             db.session.commit()
 
+    page_views = PageViews.query.filter_by(id=listing_id).first()
+
+    if page_views:
+        page_views.views += 1
+        db.session.commit()
+    else:
+        page_views = PageViews(id=listing_id, views=1)
+        db.session.add(page_views)
+        db.session.commit()
+
     # Fetch comments associated with the market
     comments = Comment.query.filter_by(listing_id=listing_id).all()
     if len(comments) <= 0:
         comments = None
 
+    users_dict = {user.id: user.username for user in User.query.all()}
 
     if request.method == 'POST':
         comment_text = request.form.get('comment_text')
@@ -122,7 +146,7 @@ def market_detail(listing_id):
             if len(comments) <= 0:
                 comments = None
 
-    return render_template("market_detail.html", market=market, comments=comments, activeUser = current_user)
+    return render_template("market_detail.html", market=market, comments=comments, activeUser = current_user, users_dict = users_dict, page_views = page_views)
 
 
 @views.route('/recommendations', methods=['GET'])

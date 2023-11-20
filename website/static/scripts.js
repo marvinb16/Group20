@@ -6,3 +6,12 @@ function deletePost(postId) {
         window.location.href="/post"
     });
 }
+
+function deleteComment(market_id , commentId) {
+    fetch('/deletecomment', {
+    method: 'POST',
+    body: JSON.stringify({ commentId: commentId})
+    }).then((_res) => {
+        window.location.href="/market/" + market_id
+    });
+}

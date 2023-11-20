@@ -4,6 +4,7 @@
 {% block content %}
 <div id="content">
     <h1 style="color: black">{{ market.listing_name }} Details</h1>
+    <h2 style="color: black">{{ page_views.views }} Views</h1>
     {% if not market.listing_name %}
         <script>
             location.reload();
@@ -26,18 +27,28 @@
 
     <h2 style="color: black">Comments</h2>
     {% if comments %}
-        <table>
+        <table id="comment">
             <thead>
                 <tr>
+                    <th style="color: black">User</th>
                     <th style="color: black">Comment</th>
                     <th style="color: black">Date</th>
+                    <th style="color: black"></th>
                 </tr>
             </thead>
             <tbody>
                 {% for comment in comments %}
                     <tr>
+                        <td style="color: black" style="margin-right: 50px;">{{ users_dict.get(comment.user_id) }}</td>
                         <td style="color: black">{{ comment.text }}</td>
                         <td style="color: black">{{ comment.date }}</td>
+                        {% if comment.user_id == activeUser.id %}
+                        <td>
+                            <button type="button" style="position:right" onClick="deleteComment({{ market.listing_id }}, {{  comment.id }})">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>
@@ -62,3 +73,5 @@
 </div>
 
 {% endblock %}
+
+

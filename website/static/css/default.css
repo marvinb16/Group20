@@ -89,3 +89,22 @@ header {
     color: rgb(0, 0, 0);
    margin-top: -45px;
 }
+#comment {
+    table-layout: fixed;
+    width: 100%; 
+    border-collapse: collapse;
+}
+
+#comment td{
+    padding-right: 30px;
+    padding-bottom: 10px;
+    width: 970px;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+#comment td:last-child {
+    max-width: 150px;
+    position: sticky;
+    right: 0;
+  }

@@ -61,4 +61,9 @@ class ZipSearches(db.Model):
     zip_code = db.Column(db.String(20))
     timestamp = db.Column(db.DateTime(timezone=True), default=func.now())
 
+class PageViews(db.Model):
+    tablename = 'views'
+    id = db.Column(db.Integer, primary_key=True)
+    views = db.Column(db.Integer)
+
 
