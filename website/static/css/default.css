@@ -90,21 +90,34 @@ header {
    margin-top: -45px;
 }
 #comment {
-    table-layout: fixed;
-    width: 100%; 
+    
+    width: 100%;
     border-collapse: collapse;
-}
+  }
 
-#comment td{
-    padding-right: 30px;
-    padding-bottom: 10px;
-    width: 970px;
+  #comment td {
     word-wrap: break-word;
     white-space: normal;
-}
+    vertical-align: top; 
+  }
 
-#comment td:last-child {
-    max-width: 150px;
+  #comment td:first-child{
+    width: 50px;
+    padding-right: 20px;
+  }
+
+  #comment td:nth-child(2){
+    width: 720px;
+  }
+
+  #commment td:nth-child(3){
+    width: 20px;
+    position: sticky;
+    right: 0;
+  }
+
+  #comment td:last-child {
+    width: 30px; 
     position: sticky;
     right: 0;
   }
