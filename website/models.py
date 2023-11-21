@@ -26,6 +26,15 @@ class Comment(db.Model):
     listing_id = db.Column(db.String(20), db.ForeignKey('farmers_market.listing_id'), nullable=False)
     farmers_market = db.relationship('FarmersMarket', backref='comments')
 
+class Announcement(db.Model):
+    __tablename__ = 'announcement'
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.String(1000))
+    date = db.Column(db.DateTime(timezone=True), default=func.now())
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    listing_id = db.Column(db.String(20), db.ForeignKey('farmers_market.listing_id'), nullable=False)
+    farmers_market = db.relationship('FarmersMarket', backref='announcements')
+
 
 class FarmersMarket(db.Model):
     __tablename__ = 'farmers_market'

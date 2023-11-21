@@ -3,7 +3,7 @@ import datetime
 from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for
 from flask_login import login_required, current_user
 from flask_mail import Mail, Message
-from .models import FarmersMarket, Comment, UserMarketVisit, ZipSearches, Post, User, PageViews
+from .models import FarmersMarket, Comment, UserMarketVisit, ZipSearches, Post, User, PageViews, Announcement
 from .forms import FeedbackForm
 from . import mail
 from . import db
@@ -95,6 +95,21 @@ def delete_comment():
     
     return jsonify({})
 
+@views.route('/deleteannouncement', methods=['POST'])
+def delete_announcement():
+    announcement = json.loads(request.data)
+    announcementId = announcement['announcementId']
+    announcement = Announcement.query.get(announcementId)
+    print("Not done")
+    if announcement:
+        print("Not done 2")
+        if announcement.user_id == current_user.id:
+            db.session.delete(announcement)
+            db.session.commit()
+            print("Done")
+    
+    return jsonify({})
+
 
 @views.route('/market/<listing_id>', methods=['GET', 'POST'])
 def market_detail(listing_id):
@@ -133,6 +148,11 @@ def market_detail(listing_id):
     if len(comments) <= 0:
         comments = None
 
+    # Fetch announcements associated with the market
+    announcements = Announcement.query.filter_by(listing_id=listing_id).all()
+    if len(announcements) <= 0:
+        announcements = None
+
     users_dict = {user.id: user.username for user in User.query.all()}
 
     if request.method == 'POST':
@@ -146,7 +166,17 @@ def market_detail(listing_id):
             if len(comments) <= 0:
                 comments = None
 
-    return render_template("market_detail.html", market=market, comments=comments, activeUser = current_user, users_dict = users_dict, page_views = page_views)
+        announcement_text = request.form.get('announcement_text')
+        if announcement_text:
+            new_announcement = Announcement(text=announcement_text, user_id=current_user.id, listing_id=listing_id)
+            db.session.add(new_announcement)
+            db.session.commit()
+            flash("New announcement added.", category="success")
+            announcements = Announcement.query.filter_by(listing_id=listing_id).all()
+            if len(announcements) <= 0:
+                announcements = None
+
+    return render_template("market_detail.html", market=market, comments=comments, announcements=announcements, activeUser = current_user, users_dict = users_dict, page_views = page_views)
 
 
 @views.route('/recommendations', methods=['GET'])

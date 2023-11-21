@@ -25,7 +25,51 @@
 
     </p>
 
-    <h2 style="color: black">Comments</h2>
+    <h2 style="color: black">Vendor Announcements</h2>
+    {% if announcements %}
+        <table id="comment">
+            <thead>
+                <tr>
+                    <th style="color: black">Vendor</th>
+                    <th style="color: black">Announcement</th>
+                    <th style="color: black">Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for announcement in announcements %}
+                    <tr>
+                        <td style="color: black" style="margin-right: 50px;">{{ users_dict.get(announcement.user_id) }}</td>
+                        <td style="color: black">{{ announcement.text }}</td>
+                        <td style="color: black">{{ announcement.date }}</td>
+                        {% if announcement.user_id == activeUser.id %}
+                        <td>
+                            <button type="button" style="position:right" onClick="deleteAnnouncement({{ market.listing_id }}, {{  announcement.id }})">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="color: black">No announcements yet.</p>
+    {% endif %}
+
+
+    {% if activeUser.is_authenticated %}
+        <h2 style="color: black">Add an announcement</h2>
+        <form method="POST" action="/market/{{ market.listing_id }}">
+            <textarea name="announcement_text" id="comment" class="form-control" placeholder="Add your announcement"></textarea>
+            <br/>
+            <button type="submit">Add Announcement</button>
+        </form>
+    {% endif %}
+
+    <br>
+
+    <h2 style="color: black">User Comments and Reviews</h2>
     {% if comments %}
         <table id="comment">
             <thead>

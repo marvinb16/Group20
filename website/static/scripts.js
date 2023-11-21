@@ -15,3 +15,12 @@ function deleteComment(market_id , commentId) {
         window.location.href="/market/" + market_id
     });
 }
+
+function deleteAnnouncement(market_id , announcementId) {
+    fetch('/deleteannouncement', {
+    method: 'POST',
+    body: JSON.stringify({ announcementId: announcementId})
+    }).then((_res) => {
+        window.location.href="/market/" + market_id
+    });
+}
