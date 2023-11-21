@@ -100,13 +100,10 @@ def delete_announcement():
     announcement = json.loads(request.data)
     announcementId = announcement['announcementId']
     announcement = Announcement.query.get(announcementId)
-    print("Not done")
     if announcement:
-        print("Not done 2")
         if announcement.user_id == current_user.id:
             db.session.delete(announcement)
             db.session.commit()
-            print("Done")
     
     return jsonify({})
 
@@ -217,8 +214,8 @@ def feedback():
     form = FeedbackForm()
     if form.validate_on_submit():
         msg = Message("Feedback from " + form.name.data, sender=form.email.data, recipients=['marketmapperfeedback@gmail.com'])
-        msg.body = form.feedback.data
+        msg.body = "From: " + form.email.data + "\n" + "Message: " + form.feedback.data
         mail.send(msg)
         flash('Your feedback has been sent!')
-        return redirect(url_for('auth.login'))  # Adjust as necessary
+        return redirect(url_for('views.index'))  # Adjust as necessary
     return render_template('feedback2.html', form=form, activeUser=current_user)
